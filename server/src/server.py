@@ -1,4 +1,5 @@
-from flask import Flask
+from flask import Flask, jsonify
+from werkzeug.exceptions import *
 
 from src.handlers.messages import messages
 import src.database.database_connection
@@ -6,9 +7,13 @@ import src.database.database_connection
 app = Flask(__name__)
 
 
-@app.route("/")
-def index():
-    return "Hello world"
+@app.errorhandler(Exception)
+def handle_error(e):
+    print(type(e))
+    code = 500
+    if isinstance(e, BadRequest):
+        code = e.code
+    return jsonify(error=str(e)), code
 
 
 app.register_blueprint(
