@@ -1,5 +1,5 @@
 from datetime import datetime
-
+import logging
 from flask import Blueprint, request, Response, abort, make_response
 from mongoengine import QuerySet, FieldDoesNotExist, ValidationError
 from werkzeug.exceptions import BadRequest
@@ -16,7 +16,8 @@ def get_messages(receiver: str):
     try:
         fetched_messages: QuerySet = Message.objects(receiver=receiver)
         return Response(fetched_messages.to_json(), mimetype="application/json")
-    except Exception:
+    except Exception as error:
+        logging.error(error)
         return abort(HTTPStatus.INTERNAL_SERVER_ERROR)
 
 
@@ -33,7 +34,8 @@ def add_message(receiver: str):
         return abort(HTTPStatus.BAD_REQUEST, description="One or more fields are incorrect")
     except ValidationError:
         return abort(HTTPStatus.BAD_REQUEST, description="One or more fields are not valid")
-    except Exception:
+    except Exception as error:
+        logging.error(error)
         return abort(HTTPStatus.INTERNAL_SERVER_ERROR)
 
 
@@ -46,5 +48,6 @@ def delete_message(receiver: str, message_id: str):
             return Response("", status=HTTPStatus.NOT_FOUND)
         fetched_messages.delete()
         return make_response()
-    except Exception:
+    except Exception as error:
+        logging.error(error)
         return abort(HTTPStatus.INTERNAL_SERVER_ERROR)
