@@ -1,0 +1,10 @@
+{
+  "extends": [
+    "react-app"
+  ],
+  "rules": {
+    "quotes": ["error", "double"],
+    "jsx-quotes": ["error", "prefer-double"],
+    "class-methods-use-this": "off"
+  }
+}

@@ -1,0 +1,14 @@
+@import "~bootstrap/scss/functions";
+@import "~bootstrap/scss/variables";
+@import "~bootstrap/scss/mixins";
+
+.manageEmail {
+
+  .manageEmails .nav .nav-tabs {
+    border-bottom: none;
+  }
+
+  .card {
+    border-top: none;
+  }
+}
