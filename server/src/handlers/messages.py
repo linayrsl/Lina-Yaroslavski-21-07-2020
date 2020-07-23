@@ -1,6 +1,6 @@
 from datetime import datetime
 import logging
-from flask import Blueprint, request, Response, abort, make_response
+from flask import Blueprint, request, Response, abort, make_response, jsonify
 from mongoengine import QuerySet, FieldDoesNotExist, ValidationError
 from werkzeug.exceptions import BadRequest
 
@@ -11,11 +11,18 @@ from http import HTTPStatus
 messages = Blueprint("messages", __name__)
 
 
-@messages.route("/", methods=["GET"])
-def get_messages(receiver: str):
+@messages.route("/<filter>", methods=["GET"])
+def get_messages(receiver: str, filter: str):
     try:
-        fetched_messages: QuerySet = Message.objects(receiver=receiver)
-        return Response(fetched_messages.to_json(), mimetype="application/json")
+        # "receiver" variable holds current user id
+        query_filter = {"receiver": receiver}
+        if filter == "sent":
+            query_filter = {"sender": receiver}
+        fetched_messages = [message.to_mongo().to_dict() for message in Message.objects(**query_filter)]
+        for message in fetched_messages:
+            object_id = message.pop("_id")
+            message["id"] = str(object_id)
+        return jsonify(fetched_messages)
     except Exception as error:
         logging.error(error)
         return abort(HTTPStatus.INTERNAL_SERVER_ERROR)
