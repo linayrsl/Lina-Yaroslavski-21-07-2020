@@ -15,12 +15,13 @@ function EmailList(props) {
   const [emails, setEmails] = useState([]);
   const receiverContext = useContext(ReceiverContext);
   const [isProcessingRequest, setIsProcessingRequest] = useState(true);
+  const [pageNumber, setPageNumber] = useState(1);
 
   useEffect(() => {
     setIsProcessingRequest(true);
     const fetchMail = async () => {
       try {
-        const result = await fetch(`http://localhost:5000/api/users/${receiverContext.receiver}/messages/${props.filter}`, {
+        const result = await fetch(`http://localhost:5000/api/users/${receiverContext.receiver}/messages/${props.filter}?page=${pageNumber}`, {
         });
         if (result.status === HTTP_STATUS_CODES.OK) {
           setEmails(await result.json());
@@ -35,7 +36,7 @@ function EmailList(props) {
     }
     setEmails([]);
     fetchMail();
-  }, [props.filter, receiverContext.receiver])
+  }, [pageNumber, props.filter, receiverContext.receiver])
 
   const deleteEmail = async (mailId) => {
     try {
@@ -60,15 +61,20 @@ function EmailList(props) {
   }
 
   return (
-    <div className="emailList">
+    <div className="emailList mb-3">
       {(!isProcessingRequest && (!emails || !emails.length)) ?
         <div className="emptyMailboxNotification d-flex flex-column justify-content-center align-items-center">
-          <img src={emptyMailbox} />Currently no emails in this box
+          <img src={emptyMailbox} />Currently no more emails in this box
         </div>
         : ""}
       {isProcessingRequest ? <LoadingIndicator /> : ""}
       {emails.map((mail) =>
         <Email allowDelete={props.allowDelete} mail={mail} deleteMail={deleteEmail} key={mail.id} />)}
+      {!isProcessingRequest &&
+      <div className="d-flex justify-content-between mt-2">
+        {pageNumber > 1 && <button onClick={() => setPageNumber(pageNumber - 1)} className="btn btn-dark" type="button">&larr; Previous page</button>}
+        {emails.length === 10 && <button onClick={() => setPageNumber(pageNumber + 1)} className="btn btn-dark" type="button">Next page &rarr;</button>}
+      </div>}
     </div>
   );
 }

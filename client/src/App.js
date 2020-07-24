@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {
   Switch,
   Route,
@@ -14,6 +14,12 @@ import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   const [receiver, setReceiver] = useState("");
+
+  useEffect(() => {
+    window.document.body.classList.add("init-app-loader-animate-hide");
+    // Hiding initial app loader after 1 sec because the "fading" animation takes 1 sec to work
+    setTimeout(() => window.document.body.classList.add("init-app-loader-hidden"), 1000);
+  }, [])
 
   return (
     <ReceiverContext.Provider value={{ receiver, setReceiver: (receiver) => setReceiver(receiver) }}>
