@@ -1,7 +1,9 @@
-import React from "react";
+import React, {useState} from "react";
 import "./Email.scss";
+import LoadingIndicator from "../../LoadingIndicator/LoadingIndicator";
 
 function Email(props) {
+  const [isProcessingRequest, setIsProcessingRequest] = useState(false);
 
   return (
     <div className="email card row justify-content-center">
@@ -14,8 +16,17 @@ function Email(props) {
 
         <div className="card-text">Message: {props.mail.message}</div>
       </div>
-      {props.allowDelete &&
-      <button onClick={() => props.deleteMail(props.mail.id)} className="deleteMail btn">&times;</button>}
+      {props.allowDelete && (
+        isProcessingRequest
+          ? <LoadingIndicator className="deleteMail" />
+          : <button onClick={() => {
+              setIsProcessingRequest(true);
+              props.deleteMail(props.mail.id).catch((error) => {
+                setIsProcessingRequest(false);
+                return Promise.reject(error);
+              });
+            }} className="deleteMail btn">&times;</button>
+        )}
     </div>
   );
 }

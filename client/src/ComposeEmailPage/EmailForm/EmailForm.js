@@ -1,12 +1,16 @@
-import React from "react";
+import React, {useState} from "react";
 import { Formik, Form, Field } from "formik";
 import {ComposeEmailSchema} from "../ComposeEmailSchema";
 import {useHistory}  from "react-router-dom";
 import { toast } from "react-toastify";
+import HTTP_STATUS_CODES from "http-status-codes";
+import LoadingIndicator from "../../LoadingIndicator/LoadingIndicator";
 
 function EmailForm(props) {
 
+  const UNEXPECTED_ERROR_MESSAGE = "Something went wrong. Please contact the administrator if the error persists";
   const history = useHistory();
+  const [isProcessingRequest, setIsProcessingRequest] = useState(false);
 
   const submit = async (values) => {
     const filteredValues = {};
@@ -15,6 +19,8 @@ function EmailForm(props) {
         filteredValues[key] = values[key];
       }
     }
+
+    setIsProcessingRequest(true);
     try {
       const result = await fetch (`http://localhost:5000/api/users/${values.receiver}/messages/`,
         {
@@ -24,12 +30,20 @@ function EmailForm(props) {
           },
           body: JSON.stringify({...filteredValues}),
         });
-      if (result.status === 200) {
-        toast.success("The mail was sent");
+      if (result.status === HTTP_STATUS_CODES.OK) {
+        setIsProcessingRequest(false);
+        toast.info("The mail was sent");
         history.push("/manage");
+      } else if (result.status === HTTP_STATUS_CODES.BAD_REQUEST) {
+        setIsProcessingRequest(false);
+        toast("Form isn't filled correctly");
+      } else {
+        setIsProcessingRequest(false);
+        toast.error(UNEXPECTED_ERROR_MESSAGE);
       }
     } catch (error) {
-      console.error(error);
+      toast.error(UNEXPECTED_ERROR_MESSAGE);
+      setIsProcessingRequest(false);
     }
   }
 
@@ -74,7 +88,7 @@ function EmailForm(props) {
             <div className="form-group col-sm-6">
               <label htmlFor="submit" className="col-form-label"/>
               <div>
-                <button type="submit" className="btn btn-dark">Send</button>
+                {isProcessingRequest ? <LoadingIndicator /> : <button type="submit" className="btn btn-dark">Send</button>}
               </div>
             </div>
           </div>
