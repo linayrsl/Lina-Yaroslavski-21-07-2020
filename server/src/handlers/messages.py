@@ -7,6 +7,7 @@ from werkzeug.exceptions import BadRequest
 from src.models.message import Message
 from http import HTTPStatus
 
+from src.settings import EMAILS_PER_PAGE
 
 messages = Blueprint("messages", __name__)
 
@@ -15,10 +16,14 @@ messages = Blueprint("messages", __name__)
 def get_messages(receiver: str, filter: str):
     try:
         # "receiver" variable holds current user id
+        page = int(request.args.get("page"))
+        mails_to_skip = (page - 1) * EMAILS_PER_PAGE
         query_filter = {"receiver": receiver}
         if filter == "sent":
             query_filter = {"sender": receiver}
-        fetched_messages = [message.to_mongo().to_dict() for message in Message.objects(**query_filter)]
+
+        result = Message.objects(**query_filter).skip(mails_to_skip).limit(EMAILS_PER_PAGE)
+        fetched_messages = [message.to_mongo().to_dict() for message in result]
         for message in fetched_messages:
             object_id = message.pop("_id")
             message["id"] = str(object_id)
