@@ -1,13 +1,15 @@
-import React, {useState} from "react";
+import React, {useContext, useState} from "react";
 import { Formik, Form, Field } from "formik";
 import {ComposeEmailSchema} from "../ComposeEmailSchema";
 import {useHistory}  from "react-router-dom";
 import { toast } from "react-toastify";
 import HTTP_STATUS_CODES from "http-status-codes";
 import LoadingIndicator from "../../LoadingIndicator/LoadingIndicator";
+import {ReceiverContext} from "../../context/receiverContext";
 
 function EmailForm(props) {
 
+  const receiverContext = useContext(ReceiverContext);
   const UNEXPECTED_ERROR_MESSAGE = "Something went wrong. Please contact the administrator if the error persists";
   const history = useHistory();
   const [isProcessingRequest, setIsProcessingRequest] = useState(false);
@@ -51,7 +53,7 @@ function EmailForm(props) {
     <div className="emailForm">
       <Formik
         initialValues={{
-          receiver: "", sender: "", subject: "", message: "",
+          receiver: "", sender: receiverContext.receiver || "", subject: "", message: "",
         }}
         validationSchema={ComposeEmailSchema}
         onSubmit={submit}
