@@ -22,7 +22,11 @@ def get_messages(receiver: str, filter: str):
         if filter == "sent":
             query_filter = {"sender": receiver}
 
-        result = Message.objects(**query_filter).skip(mails_to_skip).limit(EMAILS_PER_PAGE)
+        result = Message\
+            .objects(**query_filter)\
+            .order_by("-creation_date")\
+            .skip(mails_to_skip)\
+            .limit(EMAILS_PER_PAGE)
         fetched_messages = [message.to_mongo().to_dict() for message in result]
         for message in fetched_messages:
             object_id = message.pop("_id")
