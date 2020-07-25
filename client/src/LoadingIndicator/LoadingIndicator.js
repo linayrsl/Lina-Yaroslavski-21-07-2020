@@ -1,5 +1,6 @@
 import React from "react";
 import "./LoadingIndicator.scss";
+import PropTypes from "prop-types";
 
 function LoadingIndicator(props) {
   return (
@@ -13,5 +14,9 @@ function LoadingIndicator(props) {
     </div>
   );
 }
+
+LoadingIndicator.propTypes = {
+  className: PropTypes.string,
+};
 
 export default LoadingIndicator;

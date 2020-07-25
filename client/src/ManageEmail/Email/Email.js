@@ -1,5 +1,6 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import moment from "moment";
+import PropTypes from "prop-types";
 import LoadingIndicator from "../../LoadingIndicator/LoadingIndicator";
 import "./Email.scss";
 
@@ -22,15 +23,19 @@ function Email(props) {
         isProcessingRequest
           ? <LoadingIndicator className="deleteMail" />
           : <button onClick={() => {
-              setIsProcessingRequest(true);
-              props.deleteMail(props.mail.id).catch((error) => {
-                setIsProcessingRequest(false);
-                return Promise.reject(error);
-              });
-            }} className="deleteMail btn">&times;</button>
-        )}
+            setIsProcessingRequest(true);
+            props.deleteMail(props.mail.id).catch((error) => {
+              setIsProcessingRequest(false);
+              return Promise.reject(error);
+            });
+          }} className="deleteMail btn">&times;</button>
+      )}
     </div>
   );
 }
+
+Email.propTypes = {
+  mail: PropTypes.object,
+};
 
 export default Email;

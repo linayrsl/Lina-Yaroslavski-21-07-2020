@@ -1,14 +1,13 @@
-import React, {useContext, useState} from "react";
+import React, { useContext, useState } from "react";
 import { Formik, Form, Field } from "formik";
-import {ComposeEmailSchema} from "../ComposeEmailSchema";
-import {useHistory}  from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import { toast } from "react-toastify";
 import HTTP_STATUS_CODES from "http-status-codes";
+import { ComposeEmailSchema } from "../ComposeEmailSchema";
 import LoadingIndicator from "../../LoadingIndicator/LoadingIndicator";
-import {ReceiverContext} from "../../context/receiverContext";
+import { ReceiverContext } from "../../context/receiverContext";
 
-function EmailForm(props) {
-
+function EmailForm() {
   const receiverContext = useContext(ReceiverContext);
   const UNEXPECTED_ERROR_MESSAGE = "Something went wrong. Please contact the administrator if the error persists";
   const history = useHistory();
@@ -16,7 +15,7 @@ function EmailForm(props) {
 
   const submit = async (values) => {
     const filteredValues = {};
-    for (const key in values) {
+    for (const key of Object.keys(values)) {
       if (key !== "receiver") {
         filteredValues[key] = values[key];
       }
@@ -24,13 +23,13 @@ function EmailForm(props) {
 
     setIsProcessingRequest(true);
     try {
-      const result = await fetch (`http://localhost:5000/api/users/${values.receiver}/messages/`,
+      const result = await fetch(`http://localhost:5000/api/users/${values.receiver}/messages/`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({...filteredValues}),
+          body: JSON.stringify({ ...filteredValues }),
         });
       if (result.status === HTTP_STATUS_CODES.OK) {
         setIsProcessingRequest(false);
@@ -47,7 +46,7 @@ function EmailForm(props) {
       toast.error(UNEXPECTED_ERROR_MESSAGE);
       setIsProcessingRequest(false);
     }
-  }
+  };
 
   return (
     <div className="emailForm">
@@ -58,7 +57,7 @@ function EmailForm(props) {
         validationSchema={ComposeEmailSchema}
         onSubmit={submit}
       >
-        {({isSubmitting, setFieldValue}) => (
+        {() => (
         <Form className="mt-4">
           <div className="row justify-content-center">
           <div className="form-group col-sm-6 ">
@@ -82,7 +81,7 @@ function EmailForm(props) {
             <div className="form-group col-sm-6">
               <label htmlFor="message" className="col-form-label">Text:</label>
               <div>
-                <Field  as="textarea" className="form-control" id="message" name="message"/>
+                <Field as="textarea" className="form-control" id="message" name="message"/>
               </div>
             </div>
           </div>
@@ -102,4 +101,3 @@ function EmailForm(props) {
 }
 
 export default EmailForm;
-

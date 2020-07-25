@@ -1,15 +1,11 @@
-import React, {useContext, useState} from "react";
-import {Nav, NavItem, NavLink} from "reactstrap";
-import {ReceiverContext} from "../context/receiverContext";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faPlusSquare} from "@fortawesome/free-solid-svg-icons";
-import {Link} from "react-router-dom";
+import React, { useContext, useState } from "react";
+import { Nav, NavItem, NavLink } from "reactstrap";
+import { ReceiverContext } from "../context/receiverContext";
 import EmailList from "./EmailList/EmailList";
 import SelectReceiver from "./SelectReceiver/SelectReceiver";
 import "./ManageEmail.scss";
 
 function ManageEmail() {
-
   const receiverContext = useContext(ReceiverContext);
   const [activeTab, setActiveTab] = useState("inbox");
 

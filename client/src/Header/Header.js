@@ -1,12 +1,12 @@
-import React, {useContext} from "react";
-import {ReceiverContext} from "../context/receiverContext";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faPlusSquare} from "@fortawesome/free-solid-svg-icons";
-import {Link} from "react-router-dom";
+import React, { useContext } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPlusSquare } from "@fortawesome/free-solid-svg-icons";
+import { Link } from "react-router-dom";
+import { ReceiverContext } from "../context/receiverContext";
 import "./Header.scss";
 
 function Header() {
-  const {receiver} = useContext(ReceiverContext);
+  const { receiver } = useContext(ReceiverContext);
 
   return (
     <nav className=" header navbar navbar-dark bg-light">

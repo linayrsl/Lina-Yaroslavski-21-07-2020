@@ -14,6 +14,7 @@
     "formik": "^2.1.5",
     "http-status-codes": "^1.4.0",
     "moment": "^2.27.0",
+    "prop-types": "^15.7.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-router-dom": "^5.2.0",
@@ -44,7 +45,7 @@
     ]
   },
   "devDependencies": {
-    "prop-types": "^15.7.2",
-    "sass": "^1.26.10"
+    "sass": "^1.26.10",
+    "eslint-config-airbnb-base": "^14.2.0"
   }
 }
