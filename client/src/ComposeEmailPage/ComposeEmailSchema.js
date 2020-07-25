@@ -12,5 +12,5 @@ export const ComposeEmailSchema = Yup.object()
       .required("required field"),
     subject: Yup.string()
       .required("required field"),
-    message: Yup.string()
+    message: Yup.string(),
   });

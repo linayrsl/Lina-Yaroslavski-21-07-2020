@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import {
   Switch,
   Route,
-  BrowserRouter,
+  BrowserRouter, Redirect,
 } from "react-router-dom";
 import "./App.scss";
 import { ToastContainer } from "react-toastify";
@@ -16,7 +16,10 @@ import config from "./appConfig";
 
 function App() {
   const [receiver, setReceiver] = useState("");
-  const [appConfig] = useState(config);
+  const [appConfig] = useState({
+    ...config,
+    ...(window.configOverride || {}),
+  });
 
   useEffect(() => {
     window.document.body.classList.add("init-app-loader-animate-hide");
@@ -33,6 +36,9 @@ function App() {
           <div className="app">
             <Header />
               <Switch>
+                <Route exact path="/">
+                  <Redirect to="/manage" />
+                </Route>
                 <Route path="/compose">
                   <ComposeEmailPage />
                 </Route>
