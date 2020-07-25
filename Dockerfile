@@ -1,0 +1,21 @@
+FROM node:12-alpine as client-builder
+
+WORKDIR /client
+COPY ./client .
+RUN npm ci
+RUN npm run build
+
+
+FROM python:3.7
+
+WORKDIR /server
+COPY ./server/requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
+RUN mkdir src
+COPY ./server/src ./src
+
+RUN mkdir ./static
+COPY --from=client-builder /client/build ./static
+RUN sed -i 's/window.configOverride=void 0/window.configOverride={apiBaseUrl:""}/' ./static/index.html
+
+CMD gunicorn --workers=3 --bind 0.0.0.0:$PORT --chdir src server:app
