@@ -6,16 +6,20 @@ import HTTP_STATUS_CODES from "http-status-codes";
 import { ComposeEmailSchema } from "../ComposeEmailSchema";
 import LoadingIndicator from "../../LoadingIndicator/LoadingIndicator";
 import { ReceiverContext } from "../../context/receiverContext";
+import { AppConfigContext } from "../../context/appConfigContext";
 
 function EmailForm() {
   const receiverContext = useContext(ReceiverContext);
+  const appConfigContext = useContext(AppConfigContext);
   const UNEXPECTED_ERROR_MESSAGE = "Something went wrong. Please contact the administrator if the error persists";
   const history = useHistory();
   const [isProcessingRequest, setIsProcessingRequest] = useState(false);
 
   const submit = async (values) => {
     const filteredValues = {};
-    for (const key of Object.keys(values)) {
+
+    // eslint-disable-next-line no-restricted-syntax
+    for (const key in values) {
       if (key !== "receiver") {
         filteredValues[key] = values[key];
       }
@@ -23,7 +27,7 @@ function EmailForm() {
 
     setIsProcessingRequest(true);
     try {
-      const result = await fetch(`http://localhost:5000/api/users/${values.receiver}/messages/`,
+      const result = await fetch(`${appConfigContext.apiBaseUrl}/api/users/${values.receiver}/messages/`,
         {
           method: "POST",
           headers: {

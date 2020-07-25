@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import { toast } from "react-toastify";
 import HTTP_STATUS_CODES from "http-status-codes";
 import { ReceiverContext } from "../../context/receiverContext";
+import { AppConfigContext } from "../../context/appConfigContext";
 import Email from "../Email/Email";
 import LoadingIndicator from "../../LoadingIndicator/LoadingIndicator";
 import emptyMailbox from "./empty-inbox-image.png";
@@ -12,6 +13,7 @@ function EmailList(props) {
   const UNEXPECTED_ERROR_MESSAGE = "Something went wrong. Please contact the administrator if the error persists";
   const [emails, setEmails] = useState([]);
   const receiverContext = useContext(ReceiverContext);
+  const appConfigContext = useContext(AppConfigContext);
   const [isProcessingRequest, setIsProcessingRequest] = useState(true);
   const [pageNumber, setPageNumber] = useState(1);
 
@@ -19,7 +21,7 @@ function EmailList(props) {
     setIsProcessingRequest(true);
     const fetchMail = async () => {
       try {
-        const result = await fetch(`http://localhost:5000/api/users/${receiverContext.receiver}/messages/${props.filter}?page=${pageNumber}`, {
+        const result = await fetch(`${appConfigContext.apiBaseUrl}/api/users/${receiverContext.receiver}/messages/${props.filter}?page=${pageNumber}`, {
         });
         if (result.status === HTTP_STATUS_CODES.OK) {
           setEmails(await result.json());
@@ -34,12 +36,12 @@ function EmailList(props) {
     };
     setEmails([]);
     fetchMail();
-  }, [pageNumber, props.filter, receiverContext.receiver]);
+  }, [appConfigContext.apiBaseUrl, pageNumber, props.filter, receiverContext.receiver]);
 
   const deleteEmail = async (mailId) => {
     try {
       const result = await fetch(
-        `http://localhost:5000/api/users/${receiverContext.receiver}/messages/${mailId}`,
+        `${appConfigContext.apiBaseUrl}/api/users/${receiverContext.receiver}/messages/${mailId}`,
         {
           method: "DELETE",
         },
@@ -64,7 +66,7 @@ function EmailList(props) {
     <div className="emailList mb-3">
       {(!isProcessingRequest && (!emails || !emails.length))
         ? <div className="emptyMailboxNotification d-flex flex-column justify-content-center align-items-center">
-          <img src={emptyMailbox} />Currently no more emails in this box
+          <img src={emptyMailbox} alt={"Empty inbox"}/>Currently no more emails in this box
         </div>
         : ""}
       {isProcessingRequest ? <LoadingIndicator /> : ""}
