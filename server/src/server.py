@@ -43,5 +43,10 @@ app.register_blueprint(
     url_prefix="/api/users/<receiver>/messages")
 
 
+@app.route('/<string:path_part1>')
+def client_path_handler(path_part1: str):
+    return app.send_static_file("index.html")
+
+
 if __name__ == "__main__":
     app.run(debug=True)
